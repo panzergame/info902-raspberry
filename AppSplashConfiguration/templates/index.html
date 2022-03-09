@@ -20,8 +20,12 @@
             <label for="dimension">Taille : </label>
             <input type="text" name="dimension" id="dimension">
         </div>
-        <button type="button" onclick="addParcel()">Ajouter la parcelle</button>
+        <button type="button" onclick="addNewParcel()">Ajouter la parcelle</button>
     </form>
+
+    <div id="parcels">
+        <h1>Vos parcelles</h1>
+    </div>
 
     <script src="{{url_for('static', filename='script.js')}}"></script>
 </body>

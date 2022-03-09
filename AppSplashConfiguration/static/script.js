@@ -2,7 +2,7 @@
 var parcels = []
 
 
-function addParcel() {
+function addNewParcel() {
     // Get values from html form
     let name = document.getElementById("name");
     let plant = document.getElementById("plant");
@@ -28,6 +28,34 @@ function addParcel() {
     plant.value = "";
     dim.value = "";
 
+    // To display user parcels
+    if (parcels.length == 1) {
+        document.getElementById("parcels").style.display = "inline";
+    }
 
-    console.log("Parcelles : ", parcels)
+    displayNewParcel(parcel);
+}
+
+function displayNewParcel(parcel) {
+    var parcelDiv = document.createElement("div");
+    parcelDiv.classList.add("parcel_div");
+
+    const parcelNameP = document.createElement('p');
+    var parcelName = document.createTextNode(parcel.name);
+    parcelNameP.appendChild(parcelName);
+
+    const parcelPlantP = document.createElement('p');
+    var parcelPlant = document.createTextNode(parcel.plant);
+    parcelPlantP.appendChild(parcelPlant);
+
+    const parcelTypeP = document.createElement('p');
+    var parcelType = document.createTextNode(parcel.dim);
+    parcelTypeP.appendChild(parcelType)
+
+    parcelDiv.appendChild(parcelNameP);
+    parcelDiv.appendChild(parcelPlantP);
+    parcelDiv.appendChild(parcelTypeP);
+
+    var directoryDiv = document.getElementById('parcels');
+    directoryDiv.appendChild(parcelDiv);
 }

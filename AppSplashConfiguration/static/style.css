@@ -2,3 +2,11 @@
     margin: 0;
     padding: 0;
 }
+
+#parcels {
+    display: none;
+}
+
+.parcel_div {
+    
+}
