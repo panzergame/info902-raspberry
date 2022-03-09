@@ -27,6 +27,13 @@
         <h1>Vos parcelles</h1>
     </div>
 
+    <div id="div-save-button">
+        <form action="/" method="post">
+            <input type="hidden" id="parcels-data">
+            <input type="submit" value="Enregistrer" id="save">
+        </form>
+    </div>
+
     <script src="{{url_for('static', filename='script.js')}}"></script>
 </body>
 </html>

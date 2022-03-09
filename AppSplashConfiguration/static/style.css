@@ -7,6 +7,6 @@
     display: none;
 }
 
-.parcel_div {
-    
+#div-save-button {
+    display: none;
 }

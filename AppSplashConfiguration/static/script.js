@@ -28,15 +28,18 @@ function addNewParcel() {
     plant.value = "";
     dim.value = "";
 
-    // To display user parcels
+    newParcelHtml(parcel);
+
+    // To display user parcels div    
     if (parcels.length == 1) {
         document.getElementById("parcels").style.display = "inline";
+        document.getElementById("div-save-button").style.display = "inline";
     }
 
-    displayNewParcel(parcel);
+    document.getElementById("parcels-data").value = parcels;
 }
 
-function displayNewParcel(parcel) {
+function newParcelHtml(parcel) {
     var parcelDiv = document.createElement("div");
     parcelDiv.classList.add("parcel_div");
 
