@@ -13,6 +13,8 @@ def saveParcel():
 
     json_object = json.loads(data)
 
+    with open('data.json', 'w', encoding='utf-8') as f:
+        json.dump(json_object, f, ensure_ascii=False, indent=4)
 
     return render_template('index.html')
 
