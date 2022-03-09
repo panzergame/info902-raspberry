@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Splash configuration</title>
-    <link rel="stylesheet" href='/static/style.css' />
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" />
 </head>
 <body>
     <h1>Slash configuration</h1>
@@ -18,9 +18,11 @@
         </div>
         <div>
             <label for="dimension">Taille : </label>
-            <input type="text" name="dimension">
+            <input type="text" name="dimension" id="dimension">
         </div>
-        <button type="button" onclick="">Ajouter la parcelle</button>
+        <button type="button" onclick="addParcel()">Ajouter la parcelle</button>
     </form>
+
+    <script src="{{url_for('static', filename='script.js')}}"></script>
 </body>
 </html>
