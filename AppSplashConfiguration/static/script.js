@@ -36,7 +36,7 @@ function addNewParcel() {
         document.getElementById("div-save-button").style.display = "inline";
     }
 
-    document.getElementById("parcels-data").value = parcels;
+    document.getElementById("parcels-data").value = JSON.stringify(parcels);
 }
 
 function newParcelHtml(parcel) {
