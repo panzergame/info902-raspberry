@@ -66,7 +66,7 @@ function newParcelHtml(parcel) {
     plantDiv.classList.add("row", "mx-auto", "w-75");
 
     const parcelPlantLabel = document.createElement('p');
-    parcelPlantLabelText = document.createTextNode("Plant :");
+    parcelPlantLabelText = document.createTextNode("Plante :");
     parcelPlantLabel.appendChild(parcelPlantLabelText);
     parcelPlantLabel.classList.add("col-sm-2");
 
@@ -78,27 +78,27 @@ function newParcelHtml(parcel) {
     plantDiv.appendChild(parcelPlantLabel);
     plantDiv.appendChild(parcelPlantP);
 
-    // Type div
-    var typeDiv = document.createElement("div");
-    typeDiv.classList.add("row", "mx-auto", "w-75");
+    // Dim div
+    var dimDiv = document.createElement("div");
+    dimDiv.classList.add("row", "mx-auto", "w-75");
 
-    const parcelTypeLabel = document.createElement('p');
-    parcelTypeLabelText = document.createTextNode("Type :");
-    parcelTypeLabel.appendChild(parcelTypeLabelText);
-    parcelTypeLabel.classList.add("col-sm-2");
+    const parcelDimLabel = document.createElement('p');
+    parcelDimLabelText = document.createTextNode("Taille :");
+    parcelDimLabel.appendChild(parcelDimLabelText);
+    parcelDimLabel.classList.add("col-sm-2");
 
-    const parcelTypeP = document.createElement('p');
-    var parcelType = document.createTextNode(parcel.dim);
-    parcelTypeP.appendChild(parcelType)
-    parcelTypeP.classList.add("col");
+    const parcelDimP = document.createElement('p');
+    var parcelDim = document.createTextNode(parcel.dim);
+    parcelDimP.appendChild(parcelDim)
+    parcelDimP.classList.add("col");
 
-    typeDiv.appendChild(parcelTypeLabel);
-    typeDiv.appendChild(parcelTypeP);
+    dimDiv.appendChild(parcelDimLabel);
+    dimDiv.appendChild(parcelDimP);
 
     // append to global div
     parcelDiv.appendChild(nameDiv);
     parcelDiv.appendChild(plantDiv);
-    parcelDiv.appendChild(typeDiv);
+    parcelDiv.appendChild(dimDiv);
 
     // append to the page
     var directoryDiv = document.getElementById('parcels');
