@@ -8,7 +8,7 @@ function addNewParcel() {
     let plant = document.getElementById("plant");
     let dim = document.getElementById("dimension");
     let capacity = document.getElementById("capacity");
-
+    
     // Throw error if empty input
     if (name.value == "" || plant.value == "" || dim.value == "") {
         throw 'Invalid form values !';

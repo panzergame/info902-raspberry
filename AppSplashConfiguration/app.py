@@ -14,6 +14,8 @@ def saveParcel():
     capacity = request.form['capacity-data']
     json_object = {'parcels': parcels, 'capacity': capacity}
 
+    print(json_object)
+    
     with open('data.json', 'w', encoding='utf-8') as f:
         json.dump(json_object, f, ensure_ascii=False, indent=4)
 

@@ -1,12 +1,15 @@
-[
-    {
-        "name": "flfieijf",
-        "plant": "fijirlfij",
-        "dim": "ff"
-    },
-    {
-        "name": "felfojf",
-        "plant": "f",
-        "dim": "f"
-    }
-]
+{
+    "parcels": [
+        {
+            "name": "Tomates",
+            "plant": "Tomate",
+            "dim": "30"
+        },
+        {
+            "name": "Carottes",
+            "plant": "Carotte",
+            "dim": "10"
+        }
+    ],
+    "capacity": "15"
+}
