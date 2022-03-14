@@ -11,7 +11,7 @@
     <div class="container">
         <div class="row">
             <div class="col-8 mx-auto">
-                <h1 class="text-center">Slash configuration</h1>
+                <h1 class="text-center">Splash configuration</h1>
             
                 <form>
                     <div class="form-group row mx-auto w-75">
@@ -29,8 +29,7 @@
                     <div class="form-group row mx-auto w-75">
                         <label for="dimension" class="col-sm-2 col-form-label">Taille : </label>
                         <div class="col">   
-                            <!-- <input type="text" class="form-control" name="dimension" id="dimension"> -->
-
+                            <input type="text" class="form-control" name="dimension" id="dimension">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -40,11 +39,22 @@
                 <div id="parcels">
                     <h1 class="text-center">Vos parcelles</h1>
                 </div>
-            
+
+                <h1 class="text-center">Cuve configuration</h1>
+
+                <form>
+                    <div class="form-group row mx-auto w-75">
+                        <label for="capacity" class="col-sm-2 col-form-label ">Capacité de la cuve : </label>
+                        <div class="col">
+                            <input type="text" class="form-control" name="capacity" id="capacity" >
+                        </div>
+                    </div>
+                </form>    
                 <div id="div-save-button">
                     <form action="/saveParcels" method="post">
                         <div class="form-group row">
                             <input type="hidden" id="parcels-data" name="parcels-data">
+                            <input type="hidden" id="capacity-data" name="capacity-data">
                             <input type="submit" value="Enregistrer" id="save" class="btn btn-primary mx-auto">
                         </div>
                     </form>

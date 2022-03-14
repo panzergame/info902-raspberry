@@ -7,6 +7,7 @@ function addNewParcel() {
     let name = document.getElementById("name");
     let plant = document.getElementById("plant");
     let dim = document.getElementById("dimension");
+    let capacity = document.getElementById("capacity");
 
     // Throw error if empty input
     if (name.value == "" || plant.value == "" || dim.value == "") {
@@ -37,6 +38,7 @@ function addNewParcel() {
     }
 
     document.getElementById("parcels-data").value = JSON.stringify(parcels);
+    document.getElementById("capacity-data").value = capacity.value;
 }
 
 function newParcelHtml(parcel) {

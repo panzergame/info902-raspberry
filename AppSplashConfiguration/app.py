@@ -9,9 +9,10 @@ def index():
 
 @app.route('/saveParcels', methods=['POST'])
 def saveParcel():
-    data = request.form['parcels-data']
-
-    json_object = json.loads(data)
+    print(request.form)
+    parcels = json.loads(request.form['parcels-data'])
+    capacity = request.form['capacity-data']
+    json_object = {'parcels': parcels, 'capacity': capacity}
 
     with open('data.json', 'w', encoding='utf-8') as f:
         json.dump(json_object, f, ensure_ascii=False, indent=4)
