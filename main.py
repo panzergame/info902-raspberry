@@ -4,6 +4,7 @@ from LCDScreen import LCDScreen
 import json
 import signal
 import RPi.GPIO as GPIO
+import serial
 
 BUTTON_CHANGE_VIEW_PIN = 12
 BUTTON_NEXT_STEP_PIN = 13
@@ -14,21 +15,52 @@ meteo = MeteoFranceClient()
 
 screen = LCDScreen()
 
-jsonData = None
 jsonConfig = None
 
 capaciteCuve = 1000# en litres
+water_level = 0
+water_temp = 0
 
-def main():
+communicator = serial.Serial('/dev/ttyACM0', baudrate=9600)
+
+def recvCuveData():
+    if communicator.in_waiting > 0:
+        return communicator.readline().decode()
+    return None
+
+def sendCuveQuery(query):
+    data = (query + '\n').encode()
+    communicator.write(data)
+    return recvCuveData()
+
+def parseCuveLine(line):
+    global water_level
+    global water_temp
+
+    try:
+        json_object = json.loads(line)
+    except:
+        print("failed decode", line)
+    else:
+        print(json_object)
+        if json_object["type"] == "info_sensor":
+            water_level = json_object["params"]["water_level"]
+            water_temp = json_object["params"]["water_temperature"]
+            
+def readCuveData():
+    line = recvCuveData()
+    while line is not None:
+        parseCuveLine(line)
+        line = recvCuveData()
+
+def loop():
     # Attendre que data.json existe
     algoSplash()
-
+    readCuveData()
 
 def algoSplash():
-    global jsonData
     global jsonConfig
-    file = open('capteurdata.json')
-    jsonData = json.load(file)
+
     file = open('data.json')
     jsonConfig = json.load(file)
 
@@ -42,11 +74,9 @@ def algoSplash():
 #############
 
 def afficheNiveauEau():
-    global jsonData
     global screen
     global capaciteCuve
 
-    water_level = jsonData["water_level"]
     screen.setText("Niveau d'eau :  "+str(round(water_level*(capaciteCuve/1024),3))+"L/"+str(capaciteCuve)+"L")    
     sleep(2)
     screen.setText("")
@@ -58,7 +88,6 @@ def afficheTemperature():
     global jsonData
     global screen
 
-    water_temp = jsonData["water_temp"]
     screen.setText("Temperature eau:"+str(round(water_temp,1))+"-C")    
     sleep(2)
     screen.setText("")
@@ -89,16 +118,20 @@ def afficheMeteo():
 ###########
 # Boutons #
 ###########
-state_event_map = [
-	afficheNiveauEau,
-	afficheTemperature,
-    afficheMeteo,
-]
+
 def change_view(channel):
     global STATE
     print("change view")
-    state_event_map[STATE]
-    STATE = (STATE+1)%2
+    if STATE == 0:
+        afficheNiveauEau()
+    elif STATE == 1:
+        afficheTemperature()
+    elif STATE == 2:
+        afficheMeteo()
+    else:
+        pass
+
+    STATE = (STATE+1)%3
     
     
 
@@ -110,13 +143,13 @@ def next_step(channel):
 # Main #
 ########
 
-main()
-print("Config terminee")
-
 button_event_map = [
 	(BUTTON_CHANGE_VIEW_PIN, change_view),
 	(BUTTON_NEXT_STEP_PIN, next_step)
 ]
+
+algoSplash()
+print("Config terminee")
 
 GPIO.setmode(GPIO.BCM)
 
@@ -125,4 +158,5 @@ for pin, callback in button_event_map:
 	GPIO.add_event_detect(pin, GPIO.FALLING)
 	GPIO.add_event_callback(pin, callback=callback)
 
-signal.pause()
+while True:
+    loop()
