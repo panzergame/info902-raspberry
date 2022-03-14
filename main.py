@@ -14,7 +14,7 @@ def checkFileExist(filePath):
         True si le fichier exist, False si le fichier n'existe pas.
 
     """
-    
+
     try:
         with open(filePath, 'r') as f:
             return True
@@ -25,8 +25,12 @@ def checkFileExist(filePath):
 
 def main():
     # Attendre que data.json existe
+    while (not checkFileExist("data.json")) :
+        sleep(1)
 
     algoSplash()
+
+    print("End")
 
 
 def algoSplash():
@@ -34,3 +38,5 @@ def algoSplash():
     sleep(5)
     
     # Afficher qu'il faut arroser
+
+main()
