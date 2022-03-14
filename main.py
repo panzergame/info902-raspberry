@@ -1,3 +1,4 @@
+from glob import glob
 import json
 from locale import atoi
 from LCDScreen import LCDScreen
@@ -9,6 +10,8 @@ import serial
 
 parcelDataPath = "data.json" # path pour le fichier configurant la parcelle et la quantité d'eau de la cuve
 jsonConfig = None
+
+numEtape = 0 # numéro de l'étape de l'arrosage
 
 # Coordonnée GPS 
 latitude = 45.527532
@@ -187,28 +190,34 @@ def change_view(channel):
     
 
 
-def guidedWatering():
+def guidedWatering(etape):
     """ Gestion d'une session d'arrosage guidé 
     """
-    global splashTaskState
-    if splashTaskState == "Todo" :
-        splashTaskState = "During"
-        
-        # Itération sur parcels
-        for parcel in parcels:
-            l = calculateWater(parcel['name'], atoi(parcel['dim']))
-            print("Send to arduino : Arroser la parcelle ", parcel['name'], " avec ", l, " litres d'eau")
-            # TODO attendre passage suivant 
+    l = calculateWater(parcels[etape]['name'], atoi(parcels[etape]['dim']))
+    print("Send to arduino : Arroser la parcelle ", parcels[etape]['name'], " avec ", l, " litres d'eau")
 
-        # Closing file
-        f.close()
-
-        splashTaskState = "Nothing"
-    else:
-        print("pas de tâche à réaliser")
+          
 
 def next_step(channel):
-	guidedWatering()
+    """ Quand utilise le bouton de droite, démarre un arrosage guidé et change les étapes
+    
+    """
+    global numEtape, splashTaskState
+
+    if splashTaskState == "Todo" :
+        splashTaskState = "During"
+    else:
+        print("Pas de tâches à réaliser pour le moment !")
+    
+    if splashTaskState == "During":
+
+        numEtape += 1
+
+        if (numEtape > len(parcels)) :
+            splashTaskState = "Nothing"
+            numEtape = 0
+        else:
+            guidedWatering(numEtape)
 
 
 ########
@@ -236,7 +245,7 @@ while (not checkFileExist(parcelDataPath)) :
 f = open(parcelDataPath)
 jsonConfig = json.load(f)
 
-capaciteCuve = jsonConfig['capacity']
+capaciteCuve = atoi(jsonConfig['capacity'])
 parcels = jsonConfig['parcels']
 
 # Splash a une tâche à faire au bout de 2 sec
