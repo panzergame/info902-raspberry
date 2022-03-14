@@ -1,12 +1,32 @@
 import json
 from locale import atoi
+from LCDScreen import LCDScreen
 from time import sleep
 from meteofrance_api import MeteoFranceClient
+import signal
+import RPi.GPIO as GPIO
+import serial
 
 parcelDataPath = "data.json" # path pour le fichier configurant la parcelle et la quantité d'eau de la cuve
+jsonConfig = None
+
+# Coordonnée GPS 
 latitude = 45.527532
 longitude = 5.960843
+meteo = MeteoFranceClient()
+
 splashTaskState = "Nothing" # Définit l'état de Splash, Nothing : rien à faire / Todo : une tâche d'arrosage à faire / During : en cours de réalisation
+
+capaciteCuve = 1000 # en litres
+water_level = 0
+water_temp = 0
+
+BUTTON_CHANGE_VIEW_PIN = 12
+BUTTON_NEXT_STEP_PIN = 13
+STATE = 0
+
+screen = LCDScreen()
+communicator = serial.Serial('/dev/ttyACM0', baudrate=9600)
 
 def checkFileExist(filePath):
     """Vérifier si un fichier existe.
@@ -31,45 +51,43 @@ def checkFileExist(filePath):
     except IOError as e:
         return False
 
-def main():
-    # Attendre que data.json existe
-    while (not checkFileExist(parcelDataPath)) :
-        sleep(1)
-
-    algoSplash()
-
-    print("End")
-
-
-def algoSplash():
-    global splashTaskState
-    # Afficher tout va bien
-    sleep(5)
-    
-    # Afficher qu'il faut arroser
-    splashTaskState = "Todo"
-
-    guidedWatering()
-
-def guidedWatering():
-    """ Gestion d'une session d'arrosage guidé 
+def recvCuveData():
+    """ Récupérer les messages de l'arduino
     """
-    global splashTaskState
-    if splashTaskState == "Todo" :
-        splashTaskState = "During"
-        
-        # Opening data.json file
-        f = open(parcelDataPath)
-        data = json.load(f)
-    
-        # Itération sur parcels
-        for parcel in data['parcels']:
-            l = calculateWater(parcel['name'], atoi(parcel['dim']))
-            print("Send to arduino : Arroser la parcelle ", parcel['name'], " avec ", l, " litres d'eau")
-            # TODO attendre passage suivant 
+    if communicator.in_waiting > 0:
+        return communicator.readline().decode()
+    return None
 
-        # Closing file
-        f.close()
+def sendCuveQuery(query):
+    """ Envoyer des messages à l'arduino
+    """
+    data = (query + '\n').encode()
+    communicator.write(data)
+    return recvCuveData()
+
+def parseCuveLine(line):
+    """ Parser les données récupérer depuis l'arduino
+    """
+    global water_level
+    global water_temp
+
+    try:
+        json_object = json.loads(line)
+    except:
+        print("failed decode", line)
+    else:
+        print(json_object)
+        if json_object["type"] == "info_sensor":
+            water_level = json_object["params"]["water_level"]
+            water_temp = json_object["params"]["water_temperature"]
+
+            
+def readCuveData():
+    """Lire les données envoyées depuis l'arduino"""
+    line = recvCuveData()
+    while line is not None:
+        parseCuveLine(line)
+        line = recvCuveData()
 
 def calculateWater(plant, dim):
     """ Algorithme pour calculer la quantité d'eau pour arroser une parcelle par rapport au type de plante, ca dimension et la météo
@@ -102,4 +120,134 @@ def calculateWater(plant, dim):
 
     return plant_mult * dim
 
-main()
+
+#############
+# Affichage #
+#############
+
+def afficheNiveauEau():
+    global screen
+    global capaciteCuve
+
+    screen.setText("Niveau d'eau :  "+str(round(water_level*(capaciteCuve/1024),3))+"L/"+str(capaciteCuve)+"L")    
+    sleep(2)
+    screen.setText("")
+
+    print("Niveau d'eau :  "+str((water_level*(capaciteCuve/1024)))+"L/"+str(capaciteCuve)+"L")
+
+
+def afficheTemperature():
+    global jsonData
+    global screen
+
+    screen.setText("Temperature eau:"+str(round(water_temp,1))+"-C")    
+    sleep(2)
+    screen.setText("")
+
+    print("Temperature eau:"+str(round(water_temp,1))+"-C")
+
+
+def afficheMeteo():
+    global meteo
+    
+    previsions = meteo.get_forecast(45.64135619912203, 5.870128080576113,"fr").daily_forecast[1]
+    temp = (previsions["T"]["min"]+previsions["T"]["max"])/2
+    humidite = (previsions["humidity"]["min"]+previsions["humidity"]["max"])/2
+    precipitation = previsions["precipitation"]["24h"]
+    
+    #32 car max par setText(txt)
+    screen.setText("Meteo :         Temp : "+str(round(temp,1))+"-C")
+    sleep(2)
+    screen.setText("Meteo :         Humidite : "+str(round(humidite,1))+"%")
+    sleep(2)
+    screen.setText("Meteo :         Pluie : "+str(round(precipitation,1))+"%")
+    sleep(2)
+    screen.setText("")
+    
+    print("Météo  Température : "+str(temp)+"°C   -  Humidité : "+str(humidite)+"%   -  Précipitations (24H) : "+str(precipitation)+"%")
+
+
+###########
+# Boutons #
+###########
+
+def change_view(channel):
+    global STATE
+    print("change view")
+    if STATE == 0:
+        afficheNiveauEau()
+    elif STATE == 1:
+        afficheTemperature()
+    elif STATE == 2:
+        afficheMeteo()
+    else:
+        pass
+
+    STATE = (STATE+1)%3
+    
+
+
+def guidedWatering():
+    """ Gestion d'une session d'arrosage guidé 
+    """
+    global splashTaskState
+    if splashTaskState == "Todo" :
+        splashTaskState = "During"
+        
+        # Itération sur parcels
+        for parcel in parcels:
+            l = calculateWater(parcel['name'], atoi(parcel['dim']))
+            print("Send to arduino : Arroser la parcelle ", parcel['name'], " avec ", l, " litres d'eau")
+            # TODO attendre passage suivant 
+
+        # Closing file
+        f.close()
+
+        splashTaskState = "Nothing"
+    else:
+        print("pas de tâche à réaliser")
+
+def next_step(channel):
+	guidedWatering()
+
+
+########
+# Main #
+########
+
+button_event_map = [
+	(BUTTON_CHANGE_VIEW_PIN, change_view),
+	(BUTTON_NEXT_STEP_PIN, next_step)
+]
+
+GPIO.setmode(GPIO.BCM)
+
+for pin, callback in button_event_map:
+	GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+	GPIO.add_event_detect(pin, GPIO.FALLING)
+	GPIO.add_event_callback(pin, callback=callback)
+
+
+
+# Attendre que data.json existe
+while (not checkFileExist(parcelDataPath)) :
+    sleep(1)
+
+f = open(parcelDataPath)
+jsonConfig = json.load(f)
+
+capaciteCuve = jsonConfig['capacity']
+parcels = jsonConfig['parcels']
+
+# Splash a une tâche à faire au bout de 2 sec
+sleep(2)
+splashTaskState = "Todo"
+
+def loop():
+    readCuveData()
+
+while True:
+    loop()
+
+
+
