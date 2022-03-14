@@ -11,6 +11,18 @@
     <div class="container">
         <div class="row">
             <div class="col-8 mx-auto">
+            
+                <h1 class="text-center">Cuve configuration</h1>
+                
+                <form>
+                    <div class="form-group row mx-auto w-75">
+                        <label for="capacity" class="col-sm-2 col-form-label ">Capacité de la cuve : </label>
+                        <div class="col">
+                            <input type="text" class="form-control" name="capacity" id="capacity" >
+                        </div>
+                    </div>
+                </form>  
+
                 <h1 class="text-center">Splash configuration</h1>
             
                 <form>
@@ -38,18 +50,7 @@
                 </form>    
                 <div id="parcels">
                     <h1 class="text-center">Vos parcelles</h1>
-                </div>
-
-                <h1 class="text-center">Cuve configuration</h1>
-
-                <form>
-                    <div class="form-group row mx-auto w-75">
-                        <label for="capacity" class="col-sm-2 col-form-label ">Capacité de la cuve : </label>
-                        <div class="col">
-                            <input type="text" class="form-control" name="capacity" id="capacity" >
-                        </div>
-                    </div>
-                </form>    
+                </div>  
                 <div id="div-save-button">
                     <form action="/saveParcels" method="post">
                         <div class="form-group row">
