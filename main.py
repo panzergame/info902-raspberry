@@ -7,7 +7,7 @@ import RPi.GPIO as GPIO
 
 BUTTON_CHANGE_VIEW_PIN = 12
 BUTTON_NEXT_STEP_PIN = 13
-STATE = 1
+STATE = 0
 
 
 meteo = MeteoFranceClient()
@@ -37,9 +37,9 @@ def algoSplash():
     
     # Afficher qu'il faut arroser
 
-def switchInfo():
-    STATE = 0
-
+#############
+# Affichage #
+#############
 
 def afficheNiveauEau():
     global jsonData
@@ -52,6 +52,19 @@ def afficheNiveauEau():
     screen.setText("")
 
     print("Niveau d'eau :  "+str((water_level*(capaciteCuve/1024)))+"L/"+str(capaciteCuve)+"L")
+
+
+def afficheTemperature():
+    global jsonData
+    global screen
+
+    water_temp = jsonData["water_temp"]
+    screen.setText("Temperature eau:"+str(round(water_temp,1))+"-C")    
+    sleep(2)
+    screen.setText("")
+
+    print("Temperature eau:"+str(round(water_temp,1))+"-C")
+
 
 def afficheMeteo():
     global meteo
@@ -76,21 +89,26 @@ def afficheMeteo():
 ###########
 # Boutons #
 ###########
+state_event_map = [
+	afficheNiveauEau,
+	afficheTemperature,
+    afficheMeteo,
+]
 def change_view(channel):
     global STATE
-    
     print("change view")
-    if STATE == 0 :
-        afficheMeteo()
-        STATE = 1
-    else :
-        afficheNiveauEau()
-        STATE=0
+    state_event_map[STATE]
+    STATE = (STATE+1)%2
+    
     
 
 def next_step(channel):
 	print("next step")
 
+
+########
+# Main #
+########
 
 main()
 print("Config terminee")
