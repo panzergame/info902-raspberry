@@ -211,13 +211,13 @@ def next_step(channel):
     
     if splashTaskState == "During":
 
-        numEtape += 1
-
-        if (numEtape > len(parcels)) :
+        if (numEtape >= len(parcels)-1) :
             splashTaskState = "Nothing"
             numEtape = 0
         else:
             guidedWatering(numEtape)
+
+        numEtape += 1
 
 
 ########
