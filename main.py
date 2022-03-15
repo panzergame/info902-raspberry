@@ -195,14 +195,16 @@ def guidedWatering(etape):
     """
     l = calculateWater(parcels[etape]['name'], atoi(parcels[etape]['dim']))
     print("Send to arduino : Arroser la parcelle ", parcels[etape]['name'], " avec ", l, " litres d'eau")
+    # sendCuveQuery()
 
           
 
 def next_step(channel):
     """ Quand utilise le bouton de droite, démarre un arrosage guidé et change les étapes
-    
     """
     global numEtape, splashTaskState
+
+    print("Taille de la parcelle : ", len(parcels))
 
     if splashTaskState == "Todo" :
         splashTaskState = "During"
@@ -210,15 +212,12 @@ def next_step(channel):
         print("Pas de tâches à réaliser pour le moment !")
     
     if splashTaskState == "During":
-
-        if (numEtape >= len(parcels)-1) :
-            splashTaskState = "Nothing"
-            numEtape = 0
-        else:
+        if (numEtape < len(parcels)) :
             guidedWatering(numEtape)
-
-        numEtape += 1
-
+            numEtape += 1
+        else:
+            numEtape = 0
+            splashTaskState = "Nothing"
 
 ########
 # Main #
@@ -235,8 +234,6 @@ for pin, callback in button_event_map:
 	GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 	GPIO.add_event_detect(pin, GPIO.FALLING)
 	GPIO.add_event_callback(pin, callback=callback)
-
-
 
 # Attendre que data.json existe
 while (not checkFileExist(parcelDataPath)) :
@@ -257,6 +254,3 @@ def loop():
 
 while True:
     loop()
-
-
-
