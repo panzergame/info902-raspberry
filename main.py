@@ -1,6 +1,7 @@
 from glob import glob
 import json
 from locale import atoi
+from turtle import width
 from LCDScreen import LCDScreen
 from time import sleep
 from meteofrance_api import MeteoFranceClient
@@ -132,11 +133,14 @@ def afficheNiveauEau():
     global screen
     global capaciteCuve
 
-    screen.setText("Niveau d'eau :  "+str(round(water_level*(capaciteCuve/1024),3))+"L/"+str(capaciteCuve)+"L")    
+    #screen.setText("Niveau d'eau :  "+str(round(water_level*(capaciteCuve/1024),3))+"L/"+str(capaciteCuve)+"L")    
+    screen.setText("Niveau d'eau :  "+str(round((height-water_level)*width*length,3))+"L/"+str(capaciteCuve)+"L")    
+
     sleep(2)
     screen.setText("")
 
-    print("Niveau d'eau :  "+str((water_level*(capaciteCuve/1024)))+"L/"+str(capaciteCuve)+"L")
+    #print("Niveau d'eau :  "+str((water_level*(capaciteCuve/1024)))+"L/"+str(capaciteCuve)+"L")
+    print("Niveau d'eau :  "+str((height-water_level)*width*length)+"L/"+str(capaciteCuve)+"L")
 
 
 def afficheTemperature():
@@ -242,7 +246,10 @@ while (not checkFileExist(parcelDataPath)) :
 f = open(parcelDataPath)
 jsonConfig = json.load(f)
 
-capaciteCuve = atoi(jsonConfig['cuve']['length']) * atoi(jsonConfig['cuve']['width']) * atoi(jsonConfig['cuve']['height'])
+height = atoi(jsonConfig['cuve']['height'])
+width = atoi(jsonConfig['cuve']['width'])
+length = atoi(jsonConfig['cuve']['length'])
+capaciteCuve = length * width * height
 parcels = jsonConfig['parcels']
 
 # Splash a une tâche à faire au bout de 2 sec
