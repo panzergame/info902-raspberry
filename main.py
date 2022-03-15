@@ -283,6 +283,10 @@ button_event_map = [
 
 GPIO.setmode(GPIO.BCM)
 
+led_pins = (LED_HAPPY_PIN, LED_SAD_PIN)
+for pin in led_pins:
+    GPIO.setup(pin, GPIO.OUT)
+
 for pin, callback in button_event_map:
 	GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 	GPIO.add_event_detect(pin, GPIO.FALLING)
