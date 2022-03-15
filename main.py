@@ -208,7 +208,7 @@ def guidedWatering(etape):
     l = calculateWater(parcels[etape]['plant'], atoi(parcels[etape]['dim']))
     print("Send to arduino : Arroser la parcelle ", parcels[etape]['name'], " avec ", l, " litres d'eau")
 
-    json_query = json.dumps({"type": "start_session", "id": 0, "params": {"quantity": l}})
+    json_query = json.dumps({"type": "start_session", "id": numEtape, "params": {"quantity": l}})
     sendCuveQuery(json_query)
 
           
