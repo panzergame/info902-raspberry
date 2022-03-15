@@ -108,9 +108,9 @@ def calculateWater(plant, dim):
     """
     plant_mult = 0
 
-    if (plant == 'Tomates'):
+    if (plant == 'tomates'):
         plant_mult = 0.5
-    elif (plant == 'Carottes'):
+    elif (plant == 'carottes'):
         plant_mult = 0.1
     else:
         print("Plant not define !")
@@ -193,7 +193,7 @@ def change_view(channel):
 def guidedWatering(etape):
     """ Gestion d'une session d'arrosage guidé 
     """
-    l = calculateWater(parcels[etape]['name'], atoi(parcels[etape]['dim']))
+    l = calculateWater(parcels[etape]['plant'], atoi(parcels[etape]['dim']))
     print("Send to arduino : Arroser la parcelle ", parcels[etape]['name'], " avec ", l, " litres d'eau")
     # sendCuveQuery()
 
@@ -242,7 +242,7 @@ while (not checkFileExist(parcelDataPath)) :
 f = open(parcelDataPath)
 jsonConfig = json.load(f)
 
-capaciteCuve = atoi(jsonConfig['capacity'])
+capaciteCuve = atoi(jsonConfig['cuve']['length']) * atoi(jsonConfig['cuve']['width']) * atoi(jsonConfig['cuve']['height'])
 parcels = jsonConfig['parcels']
 
 # Splash a une tâche à faire au bout de 2 sec

@@ -1,0 +1,19 @@
+{
+    "parcels": [
+        {
+            "name": "f",
+            "plant": "tomates",
+            "dim": "3"
+        },
+        {
+            "name": "ff",
+            "plant": "carottes",
+            "dim": "6"
+        }
+    ],
+    "cuve": {
+        "length": "4",
+        "width": "5",
+        "height": "5"
+    }
+}

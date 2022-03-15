@@ -1,14 +1,33 @@
 // The list of user parcels
 var parcels = []
 
+function addCuveConfig() {
+    // Get values from html form
+    let length = document.getElementById("length");
+    let width = document.getElementById("width");
+    let height = document.getElementById("height");
+
+    // Throw error if empty input
+    if (length.value == "" || width.value == "" || height.value == "") {
+        throw 'Invalid form values !';
+    }
+
+    // Init cuve config
+    let cuve = {
+        length: length.value,
+        width: width.value,
+        height: height.value,
+    }
+
+    document.getElementById("cuve-data").value = JSON.stringify(cuve);
+}
 
 function addNewParcel() {
     // Get values from html form
     let name = document.getElementById("name");
     let plant = document.getElementById("plant");
     let dim = document.getElementById("dimension");
-    let capacity = document.getElementById("capacity");
-    
+
     // Throw error if empty input
     if (name.value == "" || plant.value == "" || dim.value == "") {
         throw 'Invalid form values !';
@@ -38,7 +57,6 @@ function addNewParcel() {
     }
 
     document.getElementById("parcels-data").value = JSON.stringify(parcels);
-    document.getElementById("capacity-data").value = capacity.value;
 }
 
 function newParcelHtml(parcel) {

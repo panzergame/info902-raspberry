@@ -11,26 +11,63 @@
     <div class="container">
         <div class="row">
             <div class="col-8 mx-auto">
+            
+                <h1 class="text-center">Cuve configuration</h1>
+                
+                <form>
+                    <div class="form-group row mx-auto w-75">
+                        <label for="capacity" class="col-sm-3 col-form-label ">Longueur :</label>
+                        <div class="col">
+                            <input type="number" class="form-control" name="length" id="length" >
+                        </div>
+                    </div>
+                    <div class="form-group row mx-auto w-75">
+                        <label for="capacity" class="col-sm-3 col-form-label ">Largeur :</label>
+                        <div class="col">
+                            <input type="number" class="form-control" name="width" id="width">
+                        </div>
+                    </div>
+                    <div class="form-group row mx-auto w-75">
+                        <label for="capacity" class="col-sm-3 col-form-label ">Hauteur :</label>
+                        <div class="col">
+                            <input type="number" class="form-control" name="height" id="height" >
+                        </div>
+                    </div>
+                    <div class="mx-auto w-50">
+                        <p>* dimension en cm</p>
+                    </div>
+                    <div class="form-group row">
+                        <button type="button" onclick="addCuveConfig()" class="btn btn-primary mx-auto">Enregistrer la configuration</button>
+                    </div>
+                </form>  
+
                 <h1 class="text-center">Splash configuration</h1>
             
                 <form>
                     <div class="form-group row mx-auto w-75">
-                        <label for="name" class="col-sm-2 col-form-label ">Nom : </label>
+                        <label for="name" class="col-sm-3 col-form-label ">Nom : </label>
                         <div class="col">
                             <input type="text" class="form-control" name="name" id="name" >
                         </div>
                     </div>
                     <div class="form-group row mx-auto w-75">
-                        <label for="plant" class="col-sm-2 col-form-label">Plante : </label>
+                        <label for="plant" class="col-sm-3 col-form-label">Plante : </label>
                         <div class="col">
-                            <input type="text" class="form-control" name="plant" id="plant">
+                            <select name="plant" id="plant" class="form-control">
+                                <option value=""></option>
+                                <option value="tomates">Tomates</option>
+                                <option value="carottes">Carottes</option>
+                            </select>
                         </div>
                     </div>
                     <div class="form-group row mx-auto w-75">
-                        <label for="dimension" class="col-sm-2 col-form-label">Taille : </label>
+                        <label for="dimension" class="col-sm-3 col-form-label">Taille : </label>
                         <div class="col">   
-                            <input type="text" class="form-control" name="dimension" id="dimension">
+                            <input type="number" class="form-control" name="dimension" id="dimension">
                         </div>
+                    </div>
+                    <div class="mx-auto w-50">
+                        <p>* taille en m</p>
                     </div>
                     <div class="form-group row">
                         <button type="button" onclick="addNewParcel()" class="btn btn-primary mx-auto">Ajouter la parcelle</button>
@@ -38,23 +75,12 @@
                 </form>    
                 <div id="parcels">
                     <h1 class="text-center">Vos parcelles</h1>
-                </div>
-
-                <h1 class="text-center">Cuve configuration</h1>
-
-                <form>
-                    <div class="form-group row mx-auto w-75">
-                        <label for="capacity" class="col-sm-2 col-form-label ">Capacité de la cuve : </label>
-                        <div class="col">
-                            <input type="text" class="form-control" name="capacity" id="capacity" >
-                        </div>
-                    </div>
-                </form>    
+                </div>  
                 <div id="div-save-button">
                     <form action="/saveParcels" method="post">
                         <div class="form-group row">
                             <input type="hidden" id="parcels-data" name="parcels-data">
-                            <input type="hidden" id="capacity-data" name="capacity-data">
+                            <input type="hidden" id="cuve-data" name="cuve-data">
                             <input type="submit" value="Enregistrer" id="save" class="btn btn-primary mx-auto">
                         </div>
                     </form>
