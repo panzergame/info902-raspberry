@@ -28,8 +28,10 @@ capaciteCuve = 1000 # en litres
 water_level = 0
 water_temp = 0
 
-BUTTON_CHANGE_VIEW_PIN = 12
-BUTTON_NEXT_STEP_PIN = 13
+BUTTON_CHANGE_VIEW_PIN = 5
+BUTTON_NEXT_STEP_PIN = 6
+LED_HAPPY_PIN = 13
+LED_SAD_PIN = 12
 STATE = 0
 
 screen = LCDScreen()
@@ -193,6 +195,25 @@ def afficheProgression(debut,fin):
         print("Tache finie a "+str(pourcentage)+"%")
         sleep(0.5)
 
+def afficheSmiley(expression):
+    if expression == "content":
+        screen.setText("   O        O       OOOOOOOO    ")
+    else:
+        screen.setText("    OOOOOOOO       O        O   ")
+
+
+def afficheHappy():
+    afficheSmiley("content")
+    GPIO.output(LED_HAPPY_PIN, GPIO.HIGH)
+
+def afficheSad():
+    afficheSmiley("pas content")
+    GPIO.output(LED_SAD_PIN, GPIO.HIGH)
+
+def clearFeeling():
+    GPIO.output(LED_HAPPY_PIN, GPIO.LOW)
+    GPIO.output(LED_SAD_PIN, GPIO.LOW)
+    screen.setText("")
 
 ###########
 # Boutons #
@@ -247,6 +268,7 @@ def next_step(channel):
         else:
             numEtape = 0
             splashTaskState = "Nothing"
+            afficheHappy()
 
 ########
 # Main #
@@ -278,8 +300,10 @@ capaciteCuve = length * width * height * 1000 #1m3 = 1000L
 parcels = jsonConfig['parcels']
 
 # Splash a une tâche à faire au bout de 2 sec
-sleep(2)
+afficheHappy()
+sleep(5)
 splashTaskState = "Todo"
+afficheSad()
 
 def loop():
     readCuveData()
