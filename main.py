@@ -21,6 +21,8 @@ meteo = MeteoFranceClient()
 
 splashTaskState = "Nothing" # Définit l'état de Splash, Nothing : rien à faire / Todo : une tâche d'arrosage à faire / During : en cours de réalisation
 wateringSession = "Close"
+start_water_level = 0
+end_water_level = 0
 
 capaciteCuve = 1000 # en litres
 water_level = 0
@@ -76,6 +78,7 @@ def parseCuveLine(line):
     global water_level
     global water_temp
     global wateringSession
+    global start_water_level, end_water_level
 
     try:
         json_object = json.loads(line)
@@ -88,6 +91,9 @@ def parseCuveLine(line):
             water_temp = json_object["params"]["water_temperature"]
         elif json_object["type"] == "session_closed":
             wateringSession = "Close"
+        elif json_object["type"] == "ack":
+            start_water_level =  json_object["params"]["start_level"]
+            end_water_level = json_object["params"]["end_level"]
 
             
 def readCuveData():
@@ -179,9 +185,13 @@ def afficheMeteo():
 
 def afficheProgression(debut,fin):
     total = debut-fin
-    pourcentage = round(water_level/total*100,2)
-    screen.setText("Tache finie a   "+str(pourcentage)+"%")
-    print("Tache finie a "+str(pourcentage)+"%")
+
+    while splashTaskState == "During":
+    
+        pourcentage = round(water_level/total*100,2)
+        screen.setText("Tache finie a   "+str(pourcentage)+"%")
+        print("Tache finie a "+str(pourcentage)+"%")
+        sleep(0.5)
 
 
 ###########
@@ -232,6 +242,7 @@ def next_step(channel):
     if splashTaskState == "During" and wateringSession == "Close":
         if (numEtape < len(parcels)) :
             guidedWatering(numEtape)
+            splashTaskState = "Todo"
             numEtape += 1
         else:
             numEtape = 0
