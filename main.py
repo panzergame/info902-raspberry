@@ -177,6 +177,12 @@ def afficheMeteo():
     
     print("Météo  Température : "+str(temp)+"°C   -  Humidité : "+str(humidite)+"%   -  Précipitations (24H) : "+str(precipitation)+"%")
 
+def afficheProgression(debut,fin):
+    total = debut-fin
+    pourcentage = round(water_level/total*100,2)
+    screen.setText("Tache finie a   "+str(pourcentage)+"%")
+    print("Tache finie a "+str(pourcentage)+"%")
+
 
 ###########
 # Boutons #
@@ -259,7 +265,7 @@ jsonConfig = json.load(f)
 height = atoi(jsonConfig['cuve']['height'])
 width = atoi(jsonConfig['cuve']['width'])
 length = atoi(jsonConfig['cuve']['length'])
-capaciteCuve = length * width * height
+capaciteCuve = length * width * height * 1000 #1m3 = 1000L
 parcels = jsonConfig['parcels']
 
 # Splash a une tâche à faire au bout de 2 sec
