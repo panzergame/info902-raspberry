@@ -224,11 +224,9 @@ def next_step(channel):
     """
     global numEtape, splashTaskState
 
-    print("Taille de la parcelle : ", len(parcels))
-
     if splashTaskState == "Todo" :
         splashTaskState = "During"
-    else:
+    elif splashTaskState == "Nothing":
         print("Pas de tâches à réaliser pour le moment !")
     
     if splashTaskState == "During" and wateringSession == "Close":
