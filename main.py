@@ -20,6 +20,7 @@ longitude = 5.960843
 meteo = MeteoFranceClient()
 
 splashTaskState = "Nothing" # Définit l'état de Splash, Nothing : rien à faire / Todo : une tâche d'arrosage à faire / During : en cours de réalisation
+wateringSession = "Close"
 
 capaciteCuve = 1000 # en litres
 water_level = 0
@@ -74,6 +75,7 @@ def parseCuveLine(line):
     """
     global water_level
     global water_temp
+    global wateringSession
 
     try:
         json_object = json.loads(line)
@@ -84,6 +86,8 @@ def parseCuveLine(line):
         if json_object["type"] == "info_sensor":
             water_level = json_object["params"]["water_level"]
             water_temp = json_object["params"]["water_temperature"]
+        elif json_object["type"] == "session_closed":
+            wateringSession = "Close"
 
             
 def readCuveData():
@@ -203,9 +207,15 @@ def change_view(channel):
 def guidedWatering(etape):
     """ Gestion d'une session d'arrosage guidé 
     """
+    global wateringSession
+
+    wateringSession = "Open"
+    
     l = calculateWater(parcels[etape]['plant'], atoi(parcels[etape]['dim']))
     print("Send to arduino : Arroser la parcelle ", parcels[etape]['name'], " avec ", l, " litres d'eau")
-    # sendCuveQuery()
+
+    json_query = json.dumps({"type": "start_session", "id": 0, "params": {"quantity": l}})
+    sendCuveQuery(json_query)
 
           
 
@@ -221,7 +231,7 @@ def next_step(channel):
     else:
         print("Pas de tâches à réaliser pour le moment !")
     
-    if splashTaskState == "During":
+    if splashTaskState == "During" and wateringSession == "Close":
         if (numEtape < len(parcels)) :
             guidedWatering(numEtape)
             numEtape += 1
