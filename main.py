@@ -96,6 +96,7 @@ def parseCuveLine(line):
         elif json_object["type"] == "ack":
             start_water_level =  json_object["params"]["start_level"]
             end_water_level = json_object["params"]["end_level"]
+            afficheProgression(start_water_level,end_water_level)
 
             
 def readCuveData():
@@ -257,6 +258,7 @@ def next_step(channel):
 
     if splashTaskState == "Todo" :
         splashTaskState = "During"
+
     elif splashTaskState == "Nothing":
         print("Pas de tâches à réaliser pour le moment !")
     
